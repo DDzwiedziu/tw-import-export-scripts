@@ -28,6 +28,9 @@
 use strict;
 use warnings;
 use Time::Local;
+use JSON;
+use utf8;
+use Data::Dumper;
 
 # Priority mappings.
 my %priority_map = (
@@ -107,25 +110,25 @@ while (my $todo = <>)
   my $first_project = shift @projects;
 
   # Compose the JSON
-  my $json = '';
-  $json .= "{\"status\":\"${status}\"";
-  $json .= ",\"priority\":\"${priority}\""     if defined $priority && $priority ne '';
-  $json .= ",\"project\":\"${first_project}\"" if defined $first_project && $first_project ne '';
-  $json .= ",\"entry\":\"${entry}\""           if $entry ne '';
-  $json .= ",\"end\":\"${end}\""               if $end ne '';
-  $json .= ",\"due\":\"${due}\""               if $due ne '';
+  my %json; 
+  $json{'status'} = $status;
+  $json{'priority'} = $priority     if defined $priority && $priority ne '';
+  $json{'project'} = $first_project if defined $first_project && $first_project ne '';
+  $json{'entry'} = $entry           if $entry ne '';
+  $json{'end'} = $end               if $end ne '';
+  $json{'due'} = $due               if $due ne '';
 
-  if (@contexts)
-  {
-    $json .= ",\"tags\":[" . join (',', map {"\"$_\""} @contexts) . "]";
+  if (@contexts) {
+    $json{'tags'} = join (',', map {"\"$_\""} @contexts);
   }
 
-  $json .= ",\"description\":\"${description}\"}";
+  $json{'description'} = $description;
 
-  push @tasks, $json;
+  push @tasks, \%json;
 }
 
-print "[\n", join ("\n", @tasks), "\n]\n";
+my $trveJSON = encode_json ( \@tasks );
+print $trveJSON;
 exit 0;
 
 ################################################################################
