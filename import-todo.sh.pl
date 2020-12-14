@@ -30,7 +30,7 @@ use warnings;
 use Time::Local;
 use JSON;
 use utf8;
-use Data::Dumper;
+use Encode;
 
 # Priority mappings.
 my %priority_map = (
@@ -123,11 +123,14 @@ while (my $todo = <>)
   }
 
   $json{'description'} = $description;
+  # \%json = decode('UTF-8', $json);
 
   push @tasks, \%json;
 }
 
-my $trveJSON = encode_json ( \@tasks );
+my $trveJSON = to_json ( \@tasks );
+# $trveJSON = $trveJSON->utf8([1]);
+# binmode(STDOUT, ':encoding(utf8)');
 print $trveJSON;
 exit 0;
 
