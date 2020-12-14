@@ -117,20 +117,14 @@ while (my $todo = <>)
   $json{'entry'} = $entry           if $entry ne '';
   $json{'end'} = $end               if $end ne '';
   $json{'due'} = $due               if $due ne '';
-
-  if (@contexts) {
-    $json{'tags'} = join (',', map {"\"$_\""} @contexts);
-  }
+  $json{'tags'} = \@contexts        if @contexts;
 
   $json{'description'} = $description;
-  # \%json = decode('UTF-8', $json);
 
   push @tasks, \%json;
 }
 
 my $trveJSON = to_json ( \@tasks );
-# $trveJSON = $trveJSON->utf8([1]);
-# binmode(STDOUT, ':encoding(utf8)');
 print $trveJSON;
 exit 0;
 
